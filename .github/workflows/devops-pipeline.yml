@@ -91,13 +91,18 @@ jobs:
   deploy:
     needs: [test_image]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
     environment: Azure    
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@master
 
+      - uses: azure/setup-kubectl@v2.0
+
       # Set the target Azure Kubernetes Service (AKS) cluster. 
-      - uses: azure/aks-set-context@v1
+      - uses: Azure/aks-set-context@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           cluster-name: ${{ env.CLUSTER_NAME }}
@@ -108,7 +113,7 @@ jobs:
           kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
 
       # Create imagepullsecret for Azure Container registry (ACR)
-      - uses: azure/k8s-create-secret@v1
+      - uses: Azure/k8s-create-secret@v1.1
         with:
           container-registry-url: ${{ env.REGISTRY }}
           container-registry-username: ${{ github.actor }}
@@ -117,11 +122,10 @@ jobs:
           namespace: ${{ env.NAMESPACE }}
 
       # Deploy app to AKS
-      - uses: azure/k8s-deploy@v1
+      - uses: Azure/k8s-deploy@v4
         with:
           manifests: |
-            manifests/deployment.yml
-            manifests/service.yml
+            manifests/k8-deployment.yaml
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           imagepullsecrets: |
