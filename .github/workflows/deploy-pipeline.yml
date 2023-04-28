@@ -1,4 +1,4 @@
-name: AKS Deployment
+name: Deploy Pipeline
 
 on:
   workflow_run:
