@@ -62,19 +62,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and tag image
+        run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" .
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Push to GitHub Registry
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest    
 
   test_image:
     needs: [build-and-push-image]
@@ -89,8 +81,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Pull image from GitHub Registry
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest 
 
       - name: Run unit tests in container
-        run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}" -m unittest --verbose --failfast
+        run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" -m unittest --verbose --failfast
 
