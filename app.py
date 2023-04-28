@@ -1,27 +1,30 @@
-import json
-from flask import Flask, jsonify, abort, make_response
+#!/usr/bin/env python
+"""
+flask: a microservice message
+"""
+from flask import Flask, jsonify, make_response
 
 APP = Flask(__name__)
 
 # Reply
-response =   {
-    "message": "Automate all the things!",
-    "timestamp": 1529729125
-  }
+MESSAGE = {"message": "Automate all the things!", "timestamp": 1529729125}
+
 
 @APP.route('/', methods=['GET'])
 def home():
     '''Landing page'''
     return 'Welcome'
 
+
 @APP.route('/message', methods=['GET'])
 def get_message():
     '''Return static message'''
-    return jsonify(response)
+    return jsonify(MESSAGE)
+
 
 @APP.errorhandler(404)
 def not_found(error):
-    '''Return error handling message, when page not found'''    
+    '''Return error handling message, when page not found'''
     return make_response(jsonify({'error': str(error)}), 404)
 
 
