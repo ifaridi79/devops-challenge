@@ -35,3 +35,10 @@ Here are the steps:
             "password": "be78Q~nZKpbxgIDs.CQGwwOAoDTu321mYC72OcR_",
             "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
         }
+
+
+- Set Secret with azure Credentils
+
+        az ad sp create-for-rbac --name "devops-challenge" --role contributor \
+                                --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/smashing-shrew-rg \
+                                --sdk-auth
