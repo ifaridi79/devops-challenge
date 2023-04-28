@@ -92,5 +92,5 @@ jobs:
         run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
 
       - name: Run unit tests in container
-          run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}" -m unittest --verbose --failfast
+        run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}" -m unittest --verbose --failfast
 
