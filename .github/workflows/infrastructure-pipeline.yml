@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: 'Infrastructure Pipeline'
 
 on:
   workflow_run:
@@ -7,8 +7,18 @@ on:
     types: 
       - completed 
 
+#Special permissions required for OIDC authentication
 permissions:
+  id-token: write
   contents: read
+  issues: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+
 
 jobs:
   terraform:
@@ -37,9 +47,13 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir="./infrastructure/" init
 
+    # Validate terraform files
+    - name: Terraform Validate
+      run: terraform -chdir="./infrastructure/" validate      
+
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
-      run: terraform -chdir="./infrastructure/" fmt -check
+      run: terraform -chdir="./infrastructure/" fmt -check -recursive
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
