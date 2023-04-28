@@ -1,11 +1,8 @@
 name: 'Infrastructure Pipeline'
 
 on:
-  workflow_run:
-    workflows: ["CI Pipeline"]
-    branches: [main]
-    types: 
-      - completed 
+  push:
+    branches: [ "main" ]
 
 #Special permissions required for OIDC authentication
 permissions:
