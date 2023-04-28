@@ -1,0 +1,14 @@
+# Local Byte-compiled
+__pycache__/
+*.py[cod]
+
+.DS_Store
+.env
+.flaskenv
+*.pyc
+*.pyo
+env/
+venv/
+.venv/
+env*
+.vscode
