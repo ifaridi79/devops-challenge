@@ -118,7 +118,7 @@ jobs:
           container-registry-url: ${{ env.REGISTRY }}
           container-registry-username: ${{ github.actor }}
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-          secret-name: ${{ env.REGISTRY_NAME }}-registry-connection
+          secret-name: github-secrets
           namespace: ${{ env.NAMESPACE }}
 
       # Deploy app to AKS
