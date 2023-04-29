@@ -1,18 +1,17 @@
-name: Deploy Pipeline
+name: Deploy
 
 on:
   workflow_run:
-    workflows: ["Terraform"]
+    workflows: ["Infrastructure Pipeline"]
     branches: [main]
     types: 
       - completed    
 
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CLUSTER_RESOURCE_GROUP: "smashing-shrew-rg"
-  CLUSTER_NAME: "smashing-shrew-aks"
+  CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
+  CLUSTER_NAME: "terraform-resource-aks"
   NAMESPACE: default
   DEPLOYMENT_MANIFEST_PATH: "k8-deployment.yaml"
 
