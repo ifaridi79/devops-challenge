@@ -1,11 +1,16 @@
 name: Deploy Pipeline
 
 on:
+  # Manual trigger from the UI
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Deploy application to Kubernetes'
+
   workflow_run:
-    workflows: ["Infrastructure Pipeline"]
+    workflows: [Infrastructure Pipeline]
+    types: [completed]
     branches: [main]
-    types: 
-      - completed    
 
 env:
   REGISTRY: ghcr.io
