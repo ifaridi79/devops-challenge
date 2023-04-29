@@ -7,10 +7,9 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "default" {
-  name     = "${random_pet.prefix.id}-rg"
-  location = "East US 2"
-
+resource "azurerm_resource_group" "rg-aks" {
+  name     = var.resource_group_name
+  location = var.location
   tags = {
     environment = "Liatrio-Demo"
   }

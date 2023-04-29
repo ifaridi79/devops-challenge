@@ -9,6 +9,14 @@ terraform {
     }
   }
 
+  # Update this block with the location of your terraform state file
+  backend "azurerm" {
+    resource_group_name  = "terraform-github-actions-state-rg"
+    storage_account_name = "terraform-github-actions"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+
   required_version = ">= 0.14"
 }
 

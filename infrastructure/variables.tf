@@ -8,3 +8,11 @@ variable "appId" {
 variable "password" {
   description = "Azure Kubernetes Service Cluster password"
 }
+
+variable "resource_group_name" {
+  description = "Azure Resource Group name for Terraform"
+}
+
+variable "location" {
+  description = "Azure Region"
+}
