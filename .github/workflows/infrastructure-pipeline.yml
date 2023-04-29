@@ -12,9 +12,7 @@ permissions:
 
 #These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
 env:
-  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+  ARM_CREDENTIALS: "${{ secrets.AZURE_SP_TERRAFORM_CRED }}"
 
 
 jobs:
@@ -44,7 +42,7 @@ jobs:
     - name: Log in with Azure
       uses: azure/login@v1
       with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        creds: '${{ env.ARM_CREDENTIALS }}'
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
