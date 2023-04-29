@@ -16,3 +16,7 @@ variable "resource_group_name" {
 variable "location" {
   description = "Azure Region"
 }
+
+variable "resource_name" {
+  description = "Azure Resource by Terraform"
+}
