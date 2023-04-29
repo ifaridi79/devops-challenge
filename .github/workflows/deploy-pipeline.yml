@@ -23,7 +23,6 @@ env:
 
 jobs:
   deploy:
-    needs: [test_image]
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
