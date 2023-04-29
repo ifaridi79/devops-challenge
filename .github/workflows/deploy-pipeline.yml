@@ -20,12 +20,8 @@ env:
   NAMESPACE: default
   DEPLOYMENT_MANIFEST_PATH: "k8-deployment.yaml"
 
-permissions:
-  contents: read
 
 jobs:
-
-
   deploy:
     needs: [test_image]
     runs-on: ubuntu-latest
@@ -33,6 +29,7 @@ jobs:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
     environment: Azure    
+
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@master
