@@ -31,14 +31,24 @@ jobs:
 
     steps:
       # Checks out the repository this file is in
+      - id: sp-credentials
       - uses: actions/checkout@master
+      - name: Get AKS credentials
+        env:
+          CLUSTER_RESOURCE_GROUP_NAME: ${{ env.CLUSTER_RESOURCE_GROUP }}
+          CLUSTER_NAME: ${{ env.CLUSTER_NAME }}
+        run: |
+          AKS_CREDENTIALS=$(az ad sp create-for-rbac --name "aks" --role contributor \
+            --scopes /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.CLUSTER_RESOURCE_GROUP }} \
+            --sdk-auth)
+            echo "azure_crendentials=$aks_credentials" >> "$GITHUB_OUTPUT"
 
       - uses: azure/setup-kubectl@v2.0
 
       # Set the target Azure Kubernetes Service (AKS) cluster. 
       - uses: Azure/aks-set-context@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          creds: '${{ steps.sp-credentials.outputs.azure_crendentials }}'
           cluster-name: ${{ env.CLUSTER_NAME }}
           resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
