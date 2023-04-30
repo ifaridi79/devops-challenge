@@ -30,6 +30,56 @@ jobs:
     environment: Azure    
 
     steps:
+      # Checks out the repository this file is in
+      - uses: actions/checkout@master
+      
+      # Azure Credentials
+      - name: Get AKS credentials
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |        
+            AKS_CREDENTIALS=$(az ad sp create-for-rbac --name "aks" --role contributor \
+                --scopes /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.CLUSTER_RESOURCE_GROUP }} \
+                --sdk-auth)
+            echo "azure_crendentials=$aks_credentials" >> "$GITHUB_ENV"
+
+      - uses: azure/setup-kubectl@v2.0
+
+      # Set the target Azure Kubernetes Service (AKS) cluster. 
+      - name: Set AKS Context
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: '${{ env.AZURE_CREDENTIALS }}'
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+
+      # Create namespace if doesn't exist
+      - run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+
+      # Create imagepullsecret for Azure Container registry (ACR)
+      - uses: Azure/k8s-create-secret@v1.1
+        with:
+          container-registry-url: ${{ env.REGISTRY }}
+          container-registry-username: ${{ github.actor }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          secret-name: github-secrets
+          namespace: ${{ env.NAMESPACE }}
+
+      # Deploy app to AKS
+      - uses: Azure/k8s-deploy@v4
+        with:
+          manifests: |
+            manifests/k8-deployment.yaml
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          imagepullsecrets: |
+            ${{ env.REGISTRY }}-registry-connection
+          namespace: ${{ env.NAMESPACE }}
+
+
+    steps:
       - id: sp-credentials
       # Checks out the repository this file is in
       - name: Checkout
