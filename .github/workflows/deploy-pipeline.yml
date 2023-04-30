@@ -30,18 +30,20 @@ jobs:
     environment: Azure    
 
     steps:
-      # Checks out the repository this file is in
       - id: sp-credentials
-      - uses: actions/checkout@master
+      # Checks out the repository this file is in
+      - name: Checkout
+        uses: actions/checkout@master
+
       - name: Get AKS credentials
-        env:
-          CLUSTER_RESOURCE_GROUP_NAME: ${{ env.CLUSTER_RESOURCE_GROUP }}
-          CLUSTER_NAME: ${{ env.CLUSTER_NAME }}
-        run: |
-          AKS_CREDENTIALS=$(az ad sp create-for-rbac --name "aks" --role contributor \
-            --scopes /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.CLUSTER_RESOURCE_GROUP }} \
-            --sdk-auth)
-            echo "azure_crendentials=$aks_credentials" >> "$GITHUB_OUTPUT"
+        uses: azure/CLI@v1
+        with:
+            azcliversion: 2.30.0
+            inlineScript: |        
+                AKS_CREDENTIALS=$(az ad sp create-for-rbac --name "aks" --role contributor \
+                    --scopes /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.CLUSTER_RESOURCE_GROUP }} \
+                    --sdk-auth)
+                    echo "azure_crendentials=$aks_credentials" >> "$GITHUB_OUTPUT"
 
       - uses: azure/setup-kubectl@v2.0
 
