@@ -30,8 +30,14 @@ jobs:
     environment: Azure    
 
     steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}    
+
       # Checks out the repository this file is in
-      - uses: actions/checkout@master
+      - name: Checkout      
+        uses: actions/checkout@master
 
       # Azure Credentials
       - name: Get AKS credentials
@@ -58,8 +64,9 @@ jobs:
       - run: |
           kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
 
-      # Create imagepullsecret for Azure Container registry (ACR)
-      - uses: Azure/k8s-create-secret@v1.1
+      # Create imagepullsecret for GitHub Registry Package Manager
+      - name: AKS Secrets for GitHub
+        uses: Azure/k8s-create-secret@v1.1
         with:
           container-registry-url: ${{ env.REGISTRY }}
           container-registry-username: ${{ github.actor }}
@@ -68,7 +75,8 @@ jobs:
           namespace: ${{ env.NAMESPACE }}
 
       # Deploy app to AKS
-      - uses: Azure/k8s-deploy@v4
+      - name: Deploy to AKS      
+        uses: Azure/k8s-deploy@v4
         with:
           manifests: |
             manifests/k8-deployment.yaml
