@@ -22,13 +22,9 @@ jobs:
   infrastructure:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: Azure    
-
-    outputs:
-        rsg_name: ${{ steps.final-step.outputs.resource_group_name }}
-        aks_name: ${{ steps.final-step.outputs.kubernetes_cluster_name }}        
+    environment: Azure        
     
-      # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -67,6 +63,7 @@ jobs:
     
          
   deploy:
+    name: 'Kubernetes'    
     needs: infrastructure
     runs-on: ubuntu-latest
     permissions:
@@ -75,47 +72,48 @@ jobs:
     environment: Azure    
       
     steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'     
+    # Azure Login using credentials     
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'     
       
-      # Checks out the repository this file is in
-      - name: Checkout      
-        uses: actions/checkout@master
+    # Checks out the repository this file is in
+    - name: Checkout      
+      uses: actions/checkout@master
      
-      - uses: azure/setup-kubectl@v2.0
+    - uses: azure/setup-kubectl@v2.0
       
-      # Set the target Azure Kubernetes Service (AKS) cluster. 
-      - name: Set AKS Context
-        uses: Azure/aks-set-context@v1
-        with:
-          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
-          cluster-name: ${{ env.CLUSTER_NAME }}
-          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+    # Set the target Azure Kubernetes Service (AKS) cluster. 
+    - name: Set AKS Context
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
       
-      # Create namespace if doesn't exist
-      - run: |
-         kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+    # Create namespace if doesn't exist
+    - run: |
+       kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
       
-      # Create imagepullsecret for GitHub Registry Package Manager
-      - name: AKS Secrets for GitHub
-        uses: Azure/k8s-create-secret@v1.1
-        with:
-          container-registry-url: ${{ env.REGISTRY }}
-          container-registry-username: ${{ github.actor }}
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-          secret-name: github-secrets
-          namespace: ${{ env.NAMESPACE }}
+    # Create imagepullsecret for GitHub Registry Package Manager
+    - name: AKS Secrets for GitHub
+      uses: Azure/k8s-create-secret@v1.1
+      with:
+        container-registry-url: ${{ env.REGISTRY }}
+        container-registry-username: ${{ github.actor }}
+        container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+        secret-name: github-secrets
+        namespace: ${{ env.NAMESPACE }}
       
-      # Deploy app to AKS
-      - name: Deploy to AKS      
-        uses: Azure/k8s-deploy@v4
-        with:
-          manifests: |
-            manifests/k8-deployment.yaml
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          imagepullsecrets: |
-            ${{ env.REGISTRY }}-registry-connection
-          namespace: ${{ env.NAMESPACE }}
+    # Deploy app to AKS
+    - name: Deploy to AKS      
+      uses: Azure/k8s-deploy@v4
+      with:
+        manifests: |
+          manifests/k8-deployment.yaml
+        images: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        imagepullsecrets: |
+          ${{ env.REGISTRY }}-registry-connection
+        namespace: ${{ env.NAMESPACE }}
