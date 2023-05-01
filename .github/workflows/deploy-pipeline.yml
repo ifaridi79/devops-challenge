@@ -1,46 +1,104 @@
 name: Deploy Pipeline
 
+
 on:
-  # Manual trigger from the UI
-  workflow_dispatch:
-    inputs:
-      message:
-        description: 'Deploy application to Kubernetes'
-
-  workflow_run:
-    workflows: [Infrastructure Pipeline]
-    types: [completed]
-    branches: [main]
-
+  push:
+    branches: [ "main" ]
+      
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
-  CLUSTER_NAME: "terraform-resource-aks"
-  NAMESPACE: default
-  DEPLOYMENT_MANIFEST_PATH: "k8-deployment.yaml"
+    ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+    ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+    ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+    ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
+    CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
+    CLUSTER_NAME: "terraform-resource-aks"
+    NAMESPACE: default
+    DEPLOYMENT_MANIFEST_PATH: "k8-deployment.yaml"
 
 
 jobs:
+  infrastructure:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: Azure    
+
+    outputs:
+        rsg_name: ${{ steps.final-step.outputs.resource_group_name }}
+        aks_name: ${{ steps.final-step.outputs.kubernetes_cluster_name }}        
+    
+      # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir="./infrastructure/" init
+    
+    # Validate terraform files
+    - name: Terraform Validate
+      run: terraform -chdir="./infrastructure/" validate      
+    
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform -chdir="./infrastructure/" fmt -check -recursive
+    
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform -chdir="./infrastructure/" plan -input=false
+    
+    # Apply the execution to create resources
+    - name: Terraform Apply
+      id: tf-apply
+      run: terraform -chdir="./infrastructure/" apply -auto-approve -input=false
+
+      # Get the outputs from Terraform
+    - name: Get outputs
+      uses: dflook/terraform-output@v1
+      id: tf-outputs
+      with:
+        path: /infrastructure/outputs.tf
+  
+    - name: Print the AKS details 
+      run: |
+        echo "The resource_group_name is ${{ steps.tf-outputs.outputs.resource_group_name }}"
+        echo "resource_group_name=${{ steps.tf-outputs.outputs.resource_group_name }}" >> "$GITHUB_OUTPUT"
+        echo "The kubernetes_cluster_name are ${{ steps.tf-outputs.outputs.kubernetes_cluster_name }}" 
+        echo "kubernetes_cluster_name=${{ steps.tf-outputs.outputs.kubernetes_cluster_name }}" >> "$GITHUB_OUTPUT"           
+         
   deploy:
+    needs: infrastructure
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
     environment: Azure    
-
+      
     steps:
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}    
-
+      
       # Checks out the repository this file is in
       - name: Checkout      
         uses: actions/checkout@master
-
+     
       - uses: azure/setup-kubectl@v2.0
-
+      
       # Set the target Azure Kubernetes Service (AKS) cluster. 
       - name: Set AKS Context
         uses: Azure/aks-set-context@v1
@@ -48,11 +106,11 @@ jobs:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
           cluster-name: ${{ env.CLUSTER_NAME }}
           resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-
+      
       # Create namespace if doesn't exist
       - run: |
-          kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-
+         kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+      
       # Create imagepullsecret for GitHub Registry Package Manager
       - name: AKS Secrets for GitHub
         uses: Azure/k8s-create-secret@v1.1
@@ -62,7 +120,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
           secret-name: github-secrets
           namespace: ${{ env.NAMESPACE }}
-
+      
       # Deploy app to AKS
       - name: Deploy to AKS      
         uses: Azure/k8s-deploy@v4
