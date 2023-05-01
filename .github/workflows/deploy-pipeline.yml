@@ -65,19 +65,16 @@ jobs:
       id: tf-apply
       run: terraform -chdir="./infrastructure/" apply -auto-approve -input=false
 
-      # Get the outputs from Terraform
-    - name: Get outputs
-      uses: dflook/terraform-output@v1
-      id: tf-outputs
+    - name: Azure CLI script
+      uses: azure/CLI@v1
       with:
-        path: infrastructure/outputs.tf
-  
-    - name: Print the AKS details 
+        azcliversion: 2.30.0
+        run: |
+        echo "AZURE_CREDENTIALS=$(az ad sp create-for-rbac --name “terraform” --role contributor --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/terraform-github-actions-rg --sdk-auth)" >> "GITHUB_ENV"
+
+    - name: Print the AKS Credentials details 
       run: |
-        echo "The resource_group_name is ${{ steps.tf-outputs.outputs.resource_group_name }}"
-        echo "resource_group_name=${{ steps.tf-outputs.outputs.resource_group_name }}" >> "$GITHUB_OUTPUT"
-        echo "The kubernetes_cluster_name are ${{ steps.tf-outputs.outputs.kubernetes_cluster_name }}" 
-        echo "kubernetes_cluster_name=${{ steps.tf-outputs.outputs.kubernetes_cluster_name }}" >> "$GITHUB_OUTPUT"           
+        echo "AZURE_CREDENTIALS==${{ env.AZURE_CREDENTIALS }}"        
          
   deploy:
     needs: infrastructure
