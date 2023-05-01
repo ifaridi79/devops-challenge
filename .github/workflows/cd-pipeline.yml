@@ -20,7 +20,7 @@ env:
 
 jobs:
   infrastructure:
-    name: 'Terraform'
+    name: 'Provisioning AKS'
     runs-on: ubuntu-latest
     environment: Azure        
     
@@ -63,8 +63,8 @@ jobs:
     
          
   deploy:
-    name: 'Kubernetes'    
-    needs: infrastructure
+    name: 'Deploying AKS'    
+    needs: [infrastructure]    
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -94,7 +94,7 @@ jobs:
       
     # Create namespace if doesn't exist
     - run: |
-       kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
       
     # Create imagepullsecret for GitHub Registry Package Manager
     - name: AKS Secrets for GitHub

@@ -14,13 +14,13 @@ permissions:
 
 jobs:
   build_code:
-    name: Code Build
+    name: 'Code Build'
     runs-on: ubuntu-latest
 
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout      
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
 
     # Set Pyhton environment
     - name: Set up Python 3.10
@@ -49,7 +49,7 @@ jobs:
 
   build-and-push-image:
     needs: [build_code]
-    name: Build and Push Docker Image    
+    name: 'Build and Push Docker Image'    
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -78,6 +78,7 @@ jobs:
 
   test_image:
     needs: [build-and-push-image]
+    name: 'Test Docker Image' 
     runs-on: ubuntu-latest
 
     steps:
