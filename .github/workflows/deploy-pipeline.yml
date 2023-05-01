@@ -70,7 +70,7 @@ jobs:
       uses: dflook/terraform-output@v1
       id: tf-outputs
       with:
-        path: /infrastructure/outputs.tf
+        path: infrastructure/outputs.tf
   
     - name: Print the AKS details 
       run: |
