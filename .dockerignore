@@ -1,0 +1,36 @@
+.git
+.vscode
+.gitignore
+Makefile
+README.md
+
+# Local Byte-compiled
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+.DS_Store
+.env
+.flaskenv
+*.pyc
+*.pyo
+env/
+venv/
+.venv/
+env*
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+*.hcl
+
+# Crash log files
+crash.log
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

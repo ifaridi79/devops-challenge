@@ -40,8 +40,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
 3. Create a role base access control for Terraform. And configure that in Terraform infrastructure file terraform.tfvars:
 
         az ad sp create-for-rbac --skip-assignment
-        Option '--skip-assignment' has been deprecated and will be removed in a future release.
-        The output includes credentials that you must protect. Be sure that you do not include these credentials in your code or check the credentials into your source control. For more information, see https://aka.ms/azadsp-cli
+
         {
             "appId": "b9e3ed69-4db2-46d3-91c3-977ec9bb71e0",
             "displayName": "azure-cli-2023-04-26-20-49-01",
@@ -114,6 +113,28 @@ az storage account create -n tfstaccount -g terraform-github-actions-state-rg -l
 # Create Storage Account Container
 az storage container create -n tfstate --account-name tfstaccount
 ```
+
+## 2. Setup GitHub Secrets
+Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
+
+```
+ {
+    "id": "cb3f5660-48a2-492f-bd16-e2adfe209dc6"
+ }
+
+ {
+     "appId": "b9e3ed69-4db2-46d3-91c3-977ec9bb71e0",
+     "displayName": "azure-cli-2023-04-26-20-49-01",
+     "password": "be78Q~nZKpbxgIDs.CQGwwOAoDTu321mYC72OcR_",
+     "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
+ }
+```
+ Save the above values into GitHub Action Secrets:
+
+    ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"  // appId
+    ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}" //Azure subscription Id
+    ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}" // tenant
+    ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}     // password
 
 ### 2. Infrstructure Provisioning: 
 Terraform Initialization, Terraform Validation and Formatting, Terraform Planing, and Terraform Execution by saving State file. 
