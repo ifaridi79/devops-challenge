@@ -70,7 +70,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         run: |
-        echo "AZURE_CREDENTIALS=$(az ad sp create-for-rbac --name “terraform” --role contributor --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/terraform-github-actions-rg --sdk-auth)" >> "GITHUB_ENV"
+        az ad sp create-for-rbac --name “terraform” --role contributor --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/terraform-github-actions-rg --sdk-auth
 
     - name: Print the AKS Credentials details 
       run: |
