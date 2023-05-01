@@ -115,6 +115,23 @@ az storage account create -n tfstaccount -g terraform-github-actions-state-rg -l
 az storage container create -n tfstate --account-name tfstaccount
 ```
 
+## 2. Setup GitHub Secrets
+Setting-up GitHub Action secrets by mapping the above command output to the GitHub Secrets. Subscription Id you can findout rom az login output:
+```
+ {
+     "appId": "b9e3ed69-4db2-46d3-91c3-977ec9bb71e0",
+     "displayName": "azure-cli-2023-04-26-20-49-01",
+     "password": "be78Q~nZKpbxgIDs.CQGwwOAoDTu321mYC72OcR_",
+     "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
+ }
+```
+ Save the above values into GitHub Action Secrets:
+
+    ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"  // appId
+    ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}" //Azure subscription Id
+    ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}" // tenant
+    ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}     // password
+
 ### 2. Infrstructure Provisioning: 
 Terraform Initialization, Terraform Validation and Formatting, Terraform Planing, and Terraform Execution by saving State file. 
 
