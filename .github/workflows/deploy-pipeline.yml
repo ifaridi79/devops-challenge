@@ -69,6 +69,8 @@ jobs:
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
+
+    - name: Get AZ Credentials
       run: |
         echo "AZURE_CREDENTIALS=$(az ad sp create-for-rbac --name “terraform” --role contributor --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/terraform-github-actions-rg --sdk-auth)" >> "GITHUB_ENV"
     - name: Print the AKS Credentials details 
