@@ -67,6 +67,12 @@ jobs:
 
     - name: Get AZ Credentials
       run: |
+        az login \
+        --service-principal \
+        --username "${{ env.ARM_CLIENT_ID }}" \
+        --password "${{ env.ARM_CLIENT_SECRET}}" \
+        --tenant "${{env.ARM_TENANT_ID}}"
+        az account set -s "${{ env.ARM_SUBSCRIPTION_ID }}"      
         echo "AZURE_CREDENTIALS=$(az ad sp create-for-rbac --name “terraform” --role contributor --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/terraform-github-actions-rg --sdk-auth)" >> "GITHUB_ENV"
     - name: Print the AKS Credentials details 
       run: |
