@@ -48,6 +48,13 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
             "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
         }
 
+
+4. Connect to AKS from you local terminal:
+
+        az aks get-credentials --resource-group terraform-github-actions-rg --name terraform-resource-aks
+
+
+
 ### GitHub and Terrafrom environment setup:
 
 
@@ -75,10 +82,8 @@ Save the above values into GitHub Action Secrets:
 
 ![AKS](images/GitHub-secrets.png?raw=true "Secrets") 
 
-![AKS](images/secrets.png?raw=true "Secrets")  
-
 3. Create GitHub Token:
-Finally, go to the Tokens page in your Terraform Cloud User Settings. Click on Create an API token and generate an API token named GitHub.
+Go to the Tokens page in your Terraform Cloud User Settings. Click on Create an API token and generate an API token named GitHub.
 
 ![GitHub](images/GitHub_token.png?raw=true "Token")  
 
