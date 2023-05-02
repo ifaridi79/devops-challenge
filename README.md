@@ -64,7 +64,7 @@ Make sure to create a storage container to save Terraform State file in Azure cl
         az storage container create -n tfstate --account-name tfstaccount
 
 
-2. Setup GitHub Secrets
+2. Setup GitHub Secrets:
 Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
 Save the above values into GitHub Action Secrets:
 
@@ -76,6 +76,11 @@ Save the above values into GitHub Action Secrets:
 ![AKS](images/GitHub-secrets.png?raw=true "Secrets") 
 
 ![AKS](images/secrets.png?raw=true "Secrets")  
+
+3. Create GitHub Token:
+Finally, go to the Tokens page in your Terraform Cloud User Settings. Click on Create an API token and generate an API token named GitHub.
+
+![GitHub](images/GitHub_token.png?raw=true "Token")  
 
 
 ## GitHub Repository, workflows and Actions for CI/CD pipeline
