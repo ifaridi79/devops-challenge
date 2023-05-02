@@ -6,7 +6,7 @@ We will be using IaC Terraform tool to provision AKS in Azure subscription and u
 
 ![AKS](images/AKS.jpg?raw=true "GitHub-workflows")    
 
-### Initial Setup for Az Login and Terraform credentials:
+### Initial Setup for Az Login and Terraform credentials for Local setup:
 
 Here are the steps:
 
@@ -48,6 +48,35 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
             "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
         }
 
+### GitHub and Terrafrom environment setup:
+
+
+1. Azure Storage for TF State file: 
+Make sure to create a storage container to save Terraform State file in Azure cloud to maintain the state. Here are the steps to create Storage container.
+
+        # Create Resource Group
+        az group create -n terraform-github-actions-state-rg -l eastus2
+
+        # Create Storage Account
+        az storage account create -n tfstaccount -g terraform-github-actions-state-rg -l eastus2 --sku Standard_LRS
+
+        # Create Storage Account Container
+        az storage container create -n tfstate --account-name tfstaccount
+
+
+2. Setup GitHub Secrets
+Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
+Save the above values into GitHub Action Secrets:
+
+        ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"  // appId
+        ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}" //Azure subscription Id
+        ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}" // tenant
+        ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}     // password
+
+![AKS](images/GitHub-secrets.png?raw=true "Secrets") 
+
+![AKS](images/secrets.png?raw=true "Secrets")  
+
 
 ## GitHub Repository, workflows and Actions for CI/CD pipeline
 
@@ -61,19 +90,15 @@ Code structure and GitHub workflow. It comprises of Python code and unit test ca
 
 ## GitHub Workflows Pipeline Summary. 
 
-Comprises of 3 GitHub workflows:
+Comprises of 2 GitHub workflows:
 
 ### 1. CI Pipeline
 
 ![GitHub](images/CI-pipeline.png?raw=true "CI-pipeline")
 
-### 2. Infrastructure Pipeline
+### 2. CD Pipeline
 
-![GitHub](images/Infrastructure-pipeline.png?raw=true "Infra-pipeline")
-
-### 3. Deploy Pipeline
-
-![GitHub](images/Deploy-pipeline.png?raw=true "Deploy-pipeline")
+![GitHub](images/CD-pipeline.png?raw=true "Deploy-pipeline")
 
 
 ## Details of CI Pipeleine
@@ -95,84 +120,18 @@ Pulling the docker image from GitHub registry , and running unit tests on contai
 
 ![Testing](images/test-image.png?raw=true "testing image")
 
-## Details of Infrastructure Pipeline
+## Details of CD Pipeline
 
-Triggers after successfully merge the code into main branch with all tests and validations passed. Terraform calls Azure ARM to Provision AKS cluster in Azure.
+Triggers after successfully merge the code into main branch with all tests and validations passed. Terraform calls Azure ARM to Provision AKS cluster in Azure and later on deploy the application code into AKS using deployment manifest file.
 
-### 1. Azure Storage for TF State file: 
+### 1. Provisioning AKS using Terrafrom:  
+Terraform Initialization, Terraform Validation and Formatting, Terraform Planing, and Terraform Execution by saving State file.   
 
-Make sure to create a storage container to save Terraform State file in Azure cloud to maintain the state. Here are the steps to create Storage container.
+![AKS](images/Infrastructure-pipeline.png?raw=true "Secrets")  
 
-```
-# Create Resource Group
-az group create -n terraform-github-actions-state-rg -l eastus2
-
-# Create Storage Account
-az storage account create -n tfstaccount -g terraform-github-actions-state-rg -l eastus2 --sku Standard_LRS
-
-# Create Storage Account Container
-az storage container create -n tfstate --account-name tfstaccount
-```
-
-## 2. Setup GitHub Secrets
-Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
-
-```
- {
-    "id": "cb3f5660-48a2-492f-bd16-e2adfe209dc6"
- }
-
- {
-     "appId": "b9e3ed69-4db2-46d3-91c3-977ec9bb71e0",
-     "displayName": "azure-cli-2023-04-26-20-49-01",
-     "password": "be78Q~nZKpbxgIDs.CQGwwOAoDTu321mYC72OcR_",
-     "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
- }
-```
- Save the above values into GitHub Action Secrets:
-
-    ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"  // appId
-    ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}" //Azure subscription Id
-    ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}" // tenant
-    ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}     // password
-
-### 2. Infrstructure Provisioning: 
-Terraform Initialization, Terraform Validation and Formatting, Terraform Planing, and Terraform Execution by saving State file. 
-
-## Details of Deployment Pipeline
-
-### Deployment to AKS: 
-Setup kubectl, AKS context, Creating secrets for image registry pull, and Deploy manifest file by creating resources.  
-
-Deployment pipeline is dependent on Infrastructure pipeline workflow.
-
-Prerequisite: Setup Secret with azure Credentils in GitHub Action using Environment 'Azure' after creating Azure K8 clusters from Infrastructure pipeline. Here are the following steps: 
-
-### 1. Create Service Principal using the following AZ CLI command:
-
-```
-az ad sp create-for-rbac --name "devops-challenge" --role contributor \
-                                --scopes /subscriptions/cb3f5660-48a2-492f-bd16-e2adfe209dc6/resourceGroups/smashing-shrew-rg \
-                                --sdk-auth
-
-{
-  "clientId": "2dbde139-23a1-4fd9-951b-37a30d4a0b7f",
-  "clientSecret": "Dvj8Q~DBdEiEqwmXrM2oM-rS9U3~jpMYJyWq9c.w",
-  "subscriptionId": "cb3f5660-48a2-492f-bd16-e2adfe209dc6",
-  "tenantId": "541297fa-e50f-4af1-aee8-52c9542c30ce",
-  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-  "resourceManagerEndpointUrl": "https://management.azure.com/",
-  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
-  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-  "galleryEndpointUrl": "https://gallery.azure.com/",
-  "managementEndpointUrl": "https://management.core.windows.net/"
-}                                
-```
-
-### 2. Create Secrets in GitHub Environment by copying the output into GitHub Secrets variable:
-
-![AKS](images/secrets.png?raw=true "Secrets")    
+### 2. Deploying code into AKS: 
+Setup kubectl, AKS context, Creating secrets for image registry pull, and Deploy manifest file by creating resources.    
       
-
+![AKS](images/Deploy-pipeline.png?raw=true "Secrets") 
 
 
