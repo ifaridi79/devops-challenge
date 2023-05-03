@@ -15,7 +15,8 @@ env:
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
     NAMESPACE: default
-    DEPLOYMENT_MANIFEST_PATH: "k8-deployment.yaml"
+    DEPLOYMENT_MANIFEST_PATH: "manifests/deployment.yaml"
+    SERVICE_MANIFEST_PATH: "manifests/service.yaml"
 
 
 jobs:
@@ -111,7 +112,8 @@ jobs:
       uses: Azure/k8s-deploy@v4
       with:
         manifests: |
-          manifests/k8-deployment.yaml
+          ${{ env.DEPLOYMENT_MANIFEST_PATH }}
+          ${{ env.SERVICE_MANIFEST_PATH }}
         images: |
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         imagepullsecrets: |

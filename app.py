@@ -11,13 +11,7 @@ MESSAGE = {"message": "Automate all the things!", "timestamp": 1529729125}
 
 
 @APP.route('/', methods=['GET'])
-def home():
-    '''Landing page'''
-    return 'Welcome'
-
-
-@APP.route('/message', methods=['GET'])
-def get_message():
+def message():
     '''Return static message'''
     return jsonify(MESSAGE)
 

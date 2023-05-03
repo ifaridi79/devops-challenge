@@ -9,14 +9,9 @@ class Tests(unittest.TestCase):
         '''Create a test client for the app'''
         self.app = APP.test_client()
 
-    def test_home(self):
-        '''test_home: a request for / shall return 200 OK'''
+    def test_message(self):
+        '''test_message: a request for / shall return 200 OK'''
         res = self.app.get('/')
-        assert res.status == '200 OK'
-
-    def test_200(self):
-        '''test_200: a request for /message shall return 200 OK'''
-        res = self.app.get('/message')
         assert res.status == '200 OK'
 
     def test_404(self):
@@ -26,7 +21,7 @@ class Tests(unittest.TestCase):
 
     def test_json(self):
         '''test_json: a request for the message shall return the defined static JSON'''
-        res = self.app.get('/message')
+        res = self.app.get('/')
         assert res.json == {"message": "Automate all the things!", "timestamp": 1529729125}
 
 
