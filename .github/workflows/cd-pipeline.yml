@@ -11,7 +11,8 @@ env:
     ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
     REGISTRY: ghcr.io
-    TAG: 1.0
+    GIT_HUB_SECRETS: github-secrets
+    TAG: latest
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
@@ -74,12 +75,6 @@ jobs:
     environment: Azure    
       
     steps:
-    # Azure Login using credentials     
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'     
-      
     # Checks out the repository this file is in
     - name: Checkout      
       uses: actions/checkout@master
@@ -105,7 +100,7 @@ jobs:
         container-registry-url: ${{ env.REGISTRY }}
         container-registry-username: ${{ github.actor }}
         container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-        secret-name: github-secrets
+        secret-name: ${{ env.GIT_HUB_SECRETS }}
         namespace: ${{ env.NAMESPACE }}
       
     # Deploy app to AKS
@@ -118,5 +113,5 @@ jobs:
         images: |
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
         imagepullsecrets: |
-          ${{ env.REGISTRY }}-registry-connection
+          ${{ env.GIT_HUB_SECRETS }}
         namespace: ${{ env.NAMESPACE }}
