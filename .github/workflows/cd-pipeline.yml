@@ -11,6 +11,7 @@ env:
     ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
     REGISTRY: ghcr.io
+    TAG: latest
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
@@ -115,7 +116,7 @@ jobs:
           ${{ env.DEPLOYMENT_MANIFEST_PATH }}
           ${{ env.SERVICE_MANIFEST_PATH }}
         images: |
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
         imagepullsecrets: |
           ${{ env.REGISTRY }}-registry-connection
         namespace: ${{ env.NAMESPACE }}
