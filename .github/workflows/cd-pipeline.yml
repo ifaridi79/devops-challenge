@@ -11,7 +11,7 @@ env:
     ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
     REGISTRY: ghcr.io
-    TAG: latest
+    TAG: 1.0
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"

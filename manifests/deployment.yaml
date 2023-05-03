@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: app-flask
-        image: ghcr.io/ifaridi79/devops-challenge:latest
+        image: ghcr.io/ifaridi79/devops-challenge:1.0
         imagePullPolicy: Always
         resources:
           requests:
