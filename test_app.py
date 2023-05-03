@@ -1,5 +1,7 @@
 '''A module for testing'''
 import unittest
+import calendar;
+import time;
 from app import APP
 
 
@@ -21,8 +23,12 @@ class Tests(unittest.TestCase):
 
     def test_json(self):
         '''test_json: a request for the message shall return the defined static JSON'''
+        # gmt stores current gmtime
+        gmt = time.gmtime()   
+        # ts stores timestamp
+        ts = calendar.timegm(gmt)
         res = self.app.get('/')
-        assert res.json == {"message": "Automate all the things!", "timestamp": 1529729125}
+        assert res.json == {"message": "Automate all the things!", "timestamp": calendar.timegm(gmt)}
 
 
 if __name__ == "__main__":

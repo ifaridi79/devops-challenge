@@ -3,17 +3,20 @@
 flask: a microservice message
 """
 from flask import Flask, jsonify, make_response
+import calendar
+import time
 
 APP = Flask(__name__)
-
-# Reply
-MESSAGE = {"message": "Automate all the things!", "timestamp": 1529729125}
-
 
 @APP.route('/', methods=['GET'])
 def message():
     '''Return static message'''
-    return jsonify(MESSAGE)
+    # gmt stores current gmtime
+    gmt = time.gmtime()   
+    # ts stores timestamp
+    ts = calendar.timegm(gmt)
+    print("timestamp:-", ts)
+    return jsonify({"message": "Automate all the things!", "timestamp": ts})
 
 
 @APP.errorhandler(404)

@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  TAG: 1.0
+  TAG: latest
 
 permissions:
   contents: read
@@ -63,7 +63,7 @@ jobs:
 
     # Login into Container GitHub Registry Package Manager  
     - name: Log in to the Container registry
-      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      uses: docker/login-action@v2
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -71,7 +71,7 @@ jobs:
 
     # Building the Docker image and tag    
     - name: Build and tag image
-      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" .
+      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" --label org.opencontainers.image.description=Flask API Image Build with the latest .
 
     # Push to GitHub Registry  
     - name: Push to GitHub Registry
@@ -85,7 +85,7 @@ jobs:
     steps:
     # Login into Container Registry  
     - name: Log in to the Container registry
-      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      uses: docker/login-action@v2
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
