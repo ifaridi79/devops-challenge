@@ -71,7 +71,7 @@ jobs:
 
     # Building the Docker image and tag    
     - name: Build and tag image
-      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" --label org.opencontainers.image.description=Flask API Image Build with the latest .
+      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" .
 
     # Push to GitHub Registry  
     - name: Push to GitHub Registry
