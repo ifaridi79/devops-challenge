@@ -144,4 +144,7 @@ Setup kubectl, AKS context, Creating secrets for image registry pull, and Deploy
       
 ![AKS](images/Deploy-pipeline.png?raw=true "Secrets") 
 
+## !!!Bonus!!!
+Added Release Pipeline with Docker image Release Tag
+
 
