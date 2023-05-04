@@ -63,21 +63,11 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: tf-plan
-      env:
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       run: terraform -chdir="./infrastructure/" plan -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
     
     # Apply the execution to create resources
     - name: Terraform Apply
-      id: tf-apply
-      env:
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}      
+      id: tf-apply     
       run: terraform -chdir="./infrastructure/" apply -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
     
          
