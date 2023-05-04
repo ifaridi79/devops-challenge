@@ -12,7 +12,7 @@ env:
     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
     REGISTRY: ghcr.io
     GIT_HUB_SECRETS: github-secrets
-    TAG: latest
+    VERSION: v1.25.0
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
@@ -117,7 +117,7 @@ jobs:
           ${{ env.DEPLOYMENT_MANIFEST_PATH }}
           ${{ env.SERVICE_MANIFEST_PATH }}
         images: |
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
         imagepullsecrets: |
           ${{ env.GIT_HUB_SECRETS }}
         namespace: ${{ env.NAMESPACE }}
