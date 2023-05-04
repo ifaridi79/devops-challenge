@@ -51,8 +51,8 @@ jobs:
         appId = "${{ env.ARM_CLIENT_ID }}"
         password = "${{ env.ARM_CLIENT_SECRET }}"
         resource_group_name = "${{ env.CLUSTER_RESOURCE_GROUP}}"
-        resource_name       = "${{ env.CLUSTER_NAME}}"
-        location            = "${{ env.LOCATION }}"
+        resource_name = "${{ env.CLUSTER_NAME}}"
+        location = "${{ env.LOCATION }}"
         
 
     
