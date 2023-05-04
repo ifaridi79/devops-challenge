@@ -2,14 +2,16 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-variable "resource_group_name" {
+variable "CLUSTER_RESOURCE_GROUP" {
   description = "Azure Resource Group name for Terraform"
 }
 
-variable "location" {
+variable "LOCATION" {
   description = "Azure Region"
 }
 
-variable "resource_name" {
+variable "CLUSTER_NAME" {
   description = "Azure Resource by Terraform"
 }
+
+

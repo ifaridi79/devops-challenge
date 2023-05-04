@@ -8,15 +8,15 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg-aks" {
-  name     = var.resource_group_name
-  location = var.location
+  name     = var.CLUSTER_RESOURCE_GROUP
+  location = var.LOCATION
   tags = {
     environment = "Liatrio-Demo"
   }
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.resource_name
+  name                = var.CLUSTER_NAME
   location            = azurerm_resource_group.rg-aks.location
   resource_group_name = azurerm_resource_group.rg-aks.name
   dns_prefix          = "${random_pet.prefix.id}-k8s"
@@ -29,8 +29,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   service_principal {
-    client_id     = var.appId
-    client_secret = var.password
+    client_id     = var.ARM_CLIENT_ID
+    client_secret = var.ARM_CLIENT_SECRET
   }
 
   role_based_access_control {
