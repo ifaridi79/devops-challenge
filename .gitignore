@@ -21,7 +21,6 @@ env*
 *.tfstate
 *.tfstate.*
 *.hcl
-*.tfvars
 
 # Crash log files
 crash.log
