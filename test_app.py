@@ -28,7 +28,8 @@ class Tests(unittest.TestCase):
         # ts stores timestamp
         ts = calendar.timegm(gmt)
         res = self.app.get('/')
-        assert res.json == {"message": "Automate all the things!", "timestamp": calendar.timegm(gmt)}
+        print(ts)
+        assert res.json == {"message": "Automate all the things - change 1!", "timestamp": ts}
 
 
 if __name__ == "__main__":
