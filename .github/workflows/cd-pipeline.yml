@@ -40,30 +40,45 @@ jobs:
     
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}       
         
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
+      id: tf-init
       run: terraform -chdir="./infrastructure/" init       
 
     # Validate terraform files
     - name: Terraform Validate
-      run: terraform -chdir="./infrastructure/" validate      
+      id: tf-validate
+      run: terraform -chdir="./infrastructure/" validate -no-color    
     
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
+      id: tf-format
       run: terraform -chdir="./infrastructure/" fmt -check -recursive
+      continue-on-error: true
     
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir="./infrastructure/" plan -var ‘ARM_CLIENT_ID=${{ env.ARM_CLIENT_ID}}’ -var 'ARM_CLIENT_SECRET=${{ env.ARM_CLIENT_SECRET}}' -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
+      id: tf-plan
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      run: terraform -chdir="./infrastructure/" plan -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
     
     # Apply the execution to create resources
     - name: Terraform Apply
       id: tf-apply
-      run: terraform -chdir="./infrastructure/" apply -var ‘ARM_CLIENT_ID=${{ env.ARM_CLIENT_ID}}’ -var 'ARM_CLIENT_SECRET=${{ env.ARM_CLIENT_SECRET}}' -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}      
+      run: terraform -chdir="./infrastructure/" apply -var -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
     
          
   deploy:
