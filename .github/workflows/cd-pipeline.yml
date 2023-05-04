@@ -68,7 +68,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      run: terraform -chdir="./infrastructure/" plan -input=false
+      run: terraform -chdir="./infrastructure/" plan -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
     
     # Apply the execution to create resources
     - name: Terraform Apply
@@ -78,7 +78,7 @@ jobs:
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}      
-      run: terraform -chdir="./infrastructure/" apply -auto-approve -input=false
+      run: terraform -chdir="./infrastructure/" apply -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
     
          
   deploy:
