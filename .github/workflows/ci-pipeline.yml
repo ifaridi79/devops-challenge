@@ -9,6 +9,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   TAG: latest
+  VERSION: v1.25.0
 
 permissions:
   contents: read
@@ -71,7 +72,7 @@ jobs:
 
     # Building the Docker image and tag    
     - name: Build and tag image
-      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" .
+      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}" .
 
     # Push to GitHub Registry  
     - name: Push to GitHub Registry
@@ -93,8 +94,8 @@ jobs:
           
     # Pull down the docker image    
     - name: Pull image from GitHub Registry
-      run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} 
+      run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }} 
 
     # Run unit tests against docker container  
     - name: Run unit tests in container
-      run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" -m unittest --verbose --failfast
+      run: docker run "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}" -m unittest --verbose --failfast
