@@ -1,6 +1,15 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+variable "ARM_SUBSCRIPTION_ID" {
+  description = "Azure Subscription ID"
+  sensitive   = true
+}
+
+variable "ARM_TENANT_ID" {
+  description = "Azure Tenant ID"
+  sensitive   = true
+}
 
 variable "ARM_CLIENT_ID" {
   description = "Azure Kubernetes Service Cluster service principal"
@@ -23,5 +32,10 @@ variable "LOCATION" {
 variable "CLUSTER_NAME" {
   description = "Azure Resource by Terraform"
 }
+
+
+
+
+
 
 
