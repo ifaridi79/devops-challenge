@@ -35,7 +35,7 @@ jobs:
     
     steps:
     # Setup Environment Variables
-    - name: Setup Terraform
+    - name: Setup Environment
       run: |
         appId = "${{ env.ARM_CLIENT_ID }}"
         password = "${{ env.ARM_CLIENT_SECRET }}"
