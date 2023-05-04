@@ -23,15 +23,15 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
         [
         {
             "cloudName": "AzureCloud",
-            "homeTenantId": "541297fa-e50f-4af1-aee8-52c9542c30ce",
-            "id": "cb3f5660-48a2-492f-bd16-e2adfe209dc6",
+            "homeTenantId": "<tenant_id_place_holder>",
+            "id": "<subscription_id>",
             "isDefault": true,
             "managedByTenants": [],
-            "name": "Azure subscription 1",
+            "name": "<Azure_Subscription_name>",
             "state": "Enabled",
-            "tenantId": "541297fa-e50f-4af1-aee8-52c9542c30ce",
+            "tenantId": "<tenant_id_place_holder>",
             "user": {
-            "name": "imran.faridi@gmail.com",
+            "name": "<user_id>",
             "type": "user"
             }
         }
@@ -42,10 +42,10 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
         az ad sp create-for-rbac --skip-assignment
 
         {
-            "appId": "b9e3ed69-4db2-46d3-91c3-977ec9bb71e0",
-            "displayName": "azure-cli-2023-04-26-20-49-01",
-            "password": "be78Q~nZKpbxgIDs.CQGwwOAoDTu321mYC72OcR_",
-            "tenant": "541297fa-e50f-4af1-aee8-52c9542c30ce"
+            "appId": "<app_id_place_holder>",
+            "displayName": "<display_name>",
+            "password": "<password_place_holder>",
+            "tenant": "<tenant_id_place_holder>"
         }
 
 

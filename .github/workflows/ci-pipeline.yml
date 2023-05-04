@@ -71,11 +71,11 @@ jobs:
 
     # Building the Docker image and tag    
     - name: Build and tag image
-      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" .
+      run: docker build -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}" -t "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" .
 
     # Push to GitHub Registry  
     - name: Push to GitHub Registry
-      run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}    
+      run: docker push --all-tags ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}   
 
   test_image:
     needs: [build-and-push-image]
