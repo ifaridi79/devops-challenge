@@ -16,6 +16,7 @@ env:
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
+    LOCATION: "East US 2"
     NAMESPACE: default
     DEPLOYMENT_MANIFEST_PATH: "manifests/deployment.yaml"
     SERVICE_MANIFEST_PATH: "manifests/service.yaml"
@@ -45,7 +46,15 @@ jobs:
         
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform -chdir="./infrastructure/" init
+      run: |
+        terraform -chdir="./infrastructure/" init
+        appId = "${{ env.ARM_CLIENT_ID }}"
+        password = "${{ env.ARM_CLIENT_SECRET }}"
+        resource_group_name = "${{ env.CLUSTER_RESOURCE_GROUP}}"
+        resource_name       = "${{ env.CLUSTER_NAME}}"
+        location            = "${{ env.LOCATION }}"
+        
+
     
     # Validate terraform files
     - name: Terraform Validate
