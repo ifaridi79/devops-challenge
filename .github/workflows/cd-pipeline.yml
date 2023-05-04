@@ -63,12 +63,12 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: tf-plan
-      run: terraform -chdir="./infrastructure/" plan -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
+      run: terraform -chdir="./infrastructure/" plan -var ‘ARM_CLIENT_ID=${{ env.ARM_CLIENT_ID}}’ -var 'ARM_CLIENT_SECRET=${{ env.ARM_CLIENT_SECRET}}' -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -input=false
     
     # Apply the execution to create resources
     - name: Terraform Apply
       id: tf-apply     
-      run: terraform -chdir="./infrastructure/" apply -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
+      run: terraform -chdir="./infrastructure/" apply -var ‘ARM_CLIENT_ID=${{ env.ARM_CLIENT_ID}}’ -var 'ARM_CLIENT_SECRET=${{ env.ARM_CLIENT_SECRET}}' -var 'CLUSTER_RESOURCE_GROUP=${{ env.CLUSTER_RESOURCE_GROUP}}' -var 'CLUSTER_NAME=${{ env.CLUSTER_NAME}}' -var 'LOCATION=${{ env.LOCATION}}' -auto-approve -input=false
     
          
   deploy:
