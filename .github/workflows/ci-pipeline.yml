@@ -9,7 +9,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   TAG: latest
-  VERSION: v1.25.0
+  VERSION: ${{ github.sha }}
 
 permissions:
   contents: read
