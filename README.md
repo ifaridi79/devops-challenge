@@ -107,7 +107,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
 
 ### Terrafrom environment setup for DevOps:     
 
-1. Azure Storage for TF State file: 
+1. Azure Storage for Backend Remote TF State file: 
 Make sure to create a storage container to save Terraform State file in Azure cloud to maintain the state. Here are the steps to create Storage container.
 
         # Create Resource Group
@@ -156,7 +156,7 @@ Go to the Tokens page in your Terraform Cloud User Settings. Click on Create an 
 
 Git Branching strategy will be Trunk based, where individual contributor will be creating short-lived branch for changes and create a pull request for approval before merging to the main branch. Main branch has protection in placed for approval and review process process.
 
-![Branching strategy](images/trunk-based.jpg#center)
+![Branching strategy](images/trunk-based.png#center)
 
 Code structure and GitHub workflow. It comprises of Python code and unit test cases with .py extension, Dockerfile for packaging and containerized the Python flask app with all the dependencies and packaging. There is a requirements.txt file, which lists all the python dependencies. For Kubenertes deployment file with *.yaml mentioned under manifests folder, which will define deployment and roll-out strategy of Docker container in AKS. And finally the workflow pipeline CI/CD is defined declaratively in .yml file under .github/workflows folder using GitHub Actions.
 
@@ -201,7 +201,7 @@ Triggers after successfully merge the code into main branch with all tests and v
 ### 1. Provisioning AKS using Terrafrom:  
 Terraform Initialization, Terraform Validation and Formatting, Terraform Planing, and Terraform Execution by saving State file.   
 
-![AKS](images/Infrastructure-pipeline.png?raw=true "Secrets")  
+![AKS](images/Infrastructure-pipeline.png?raw=true "Infra Pipeline")  
 
 ### 2. Deploying code into AKS: 
 Setup kubectl, AKS context, Creating secrets for image registry pull, and Deploy manifest file by creating resources.    
@@ -215,8 +215,12 @@ Using Service as a Load Balancer, service port mapping to container port in serv
         ports:
           - port: 80
           targetPort: 8080
+
+![AKS](images/K8-Deployment.png?raw=true "K8 Deployment")           
       
-![AKS](images/Deploy-pipeline.png?raw=true "Secrets") 
+![AKS](images/Deploy-pipeline.png?raw=true "CD Pipeline") 
+
+
 
 ## !!!Bonus!!!
 Added Release Pipeline with Docker image Release Tag
