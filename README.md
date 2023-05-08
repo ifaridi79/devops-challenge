@@ -6,7 +6,59 @@ We will be using IaC Terraform tool to provision AKS in Azure subscription and u
 
 ![AKS](images/AKS.jpg?raw=true "GitHub-workflows")    
 
-### Initial Setup for Az Login and Terraform credentials for Local setup:
+### Local setup on Terminal for Developer:
+This will be a Python Flask Application shows the current time stamp on every request.
+
+We will be using brew to install the environment:
+
+1. Setup Python 3 and Pip(Package manager) for Environment(MacOS):
+
+        brew install python
+        python --version
+        pip --version
+
+2. Install Python dependencies using Package manager:
+All dependencies are defined in requiremnets.txt
+
+        pip install -r requirements.txt        
+
+3. Run and test Python Flask application locally:
+
+        python app.py
+        python -m unittest --verbose --failfast
+
+
+4. Setup Local Docker Environment(MacOS):
+Download Docker for Mac from https://docs.docker.com/desktop/install/mac-install/ and follow the instructions. After verfied the Docker installation you can now create a Dockerfile to containerized the Python Flask Application. Create a Dockerfile and add the runtime libraries and dependecies.
+
+        touch Dockerfile
+
+Here is the Dockerfile code snippet:
+
+        # Use Python base image
+        FROM python:3.6
+
+        # Install runtime libraries and dependencies
+        WORKDIR /flask
+        COPY . /flask
+        RUN pip install --upgrade --requirement requirements.txt
+
+        # Execute the flask App
+        EXPOSE 8080
+        ENTRYPOINT [ "python" ]
+        HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl --fail http://localhost:8080/ || exit 1" ]
+        CMD [ "/flask/app.py" ]
+
+5. Build the Docker Image with tag locally:
+
+        docker build -t app-flask .
+
+6. Run the Docker container from Image by mapping the host port to container port:
+
+        docker run -dp 80:8080 app-flask
+
+
+### Initial Setup for Az Login and Terraform credentials for Local setup for DevOps:
 
 Here are the steps:
 
@@ -53,7 +105,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
 
         az aks get-credentials --resource-group terraform-github-actions-rg --name terraform-resource-aks
 
-### Terrafrom environment setup:     
+### Terrafrom environment setup for DevOps:     
 
 1. Azure Storage for TF State file: 
 Make sure to create a storage container to save Terraform State file in Azure cloud to maintain the state. Here are the steps to create Storage container.
@@ -81,7 +133,7 @@ Note: Make sure to login into Azure Cloud using az login.
 
         terraform destroy -auto-approve
 
-### GitHub environment setup:
+### GitHub environment setup for DevOps:
 
 1. Setup GitHub Secrets:
 Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
@@ -100,7 +152,7 @@ Go to the Tokens page in your Terraform Cloud User Settings. Click on Create an 
 ![GitHub](images/GitHub_token.png?raw=true "Token")  
 
 
-## GitHub Repository, workflows and Actions for CI/CD pipeline
+## GitHub Repository, workflows and Actions for CI/CD pipeline for DevOps:
 
 Git Branching strategy will be Trunk based, where individual contributor will be creating short-lived branch for changes and create a pull request for approval before merging to the main branch. Main branch has protection in placed for approval and review process process.
 
@@ -153,6 +205,16 @@ Terraform Initialization, Terraform Validation and Formatting, Terraform Planing
 
 ### 2. Deploying code into AKS: 
 Setup kubectl, AKS context, Creating secrets for image registry pull, and Deploy manifest file by creating resources.    
+
+1. Create Kubernetes Manifest files:
+Using Service as a Load Balancer, service port mapping to container port in service.yml.
+
+        Deployment.yml
+        Service.yml
+
+        ports:
+          - port: 80
+          targetPort: 8080
       
 ![AKS](images/Deploy-pipeline.png?raw=true "Secrets") 
 
