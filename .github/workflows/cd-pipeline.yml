@@ -66,7 +66,7 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       id: tf-plan
-      run: terraform -chdir="./infrastructure/" plan  -input=false
+      run: terraform -chdir="./infrastructure/" plan -var ARM_CLIENT_ID=$ARM_CLIENT_ID -var ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID -input=false
     
     # Apply the execution to create resources
     - name: Terraform Apply
