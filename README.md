@@ -53,10 +53,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
 
         az aks get-credentials --resource-group terraform-github-actions-rg --name terraform-resource-aks
 
-
-
-### GitHub and Terrafrom environment setup:
-
+### Terrafrom environment setup:     
 
 1. Azure Storage for TF State file: 
 Make sure to create a storage container to save Terraform State file in Azure cloud to maintain the state. Here are the steps to create Storage container.
@@ -71,7 +68,22 @@ Make sure to create a storage container to save Terraform State file in Azure cl
         az storage container create -n tfstate --account-name tfstaccount
 
 
-2. Setup GitHub Secrets:
+2. Terraform CLI useful commands:
+Note: Make sure to login into Azure Cloud using az login.
+
+        terraform init
+
+        terraform plan     
+
+        terraform state   
+
+3. Destroy resources from your local terminal:        
+
+        terraform destroy -auto-approve
+
+### GitHub environment setup:
+
+1. Setup GitHub Secrets:
 Setting-up GitHub Action secrets by mapping the above 2 command outputs to the GitHub Secrets. Subscription Id you can findout rom az login output:
 Save the above values into GitHub Action Secrets:
 
