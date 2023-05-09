@@ -100,7 +100,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
         }
         ]
 
-3. Create a role base access control for Terraform. And configure that in Terraform infrastructure file terraform.tfvars for local:
+3. Create a role base access control for Terraform. Use appId and password as an input variable when using terraform locally:
 
         az ad sp create-for-rbac --skip-assignment
 
@@ -110,7 +110,6 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
             "password": "<password_place_holder>",
             "tenant": "<tenant_id_place_holder>"
         }
-
 
 4. Connect to AKS from you local terminal:
 
@@ -136,13 +135,15 @@ Note: Make sure to login into Azure Cloud using az login.
 
         terraform init
 
-        terraform plan     
+        terraform plan -var ARM_CLIENT_ID=<appId_place_holder> -var ARM_CLIENT_SECRET=<password_place_holder>
+
+        terraform apply -var ARM_CLIENT_ID=<appId_place_holder> -var ARM_CLIENT_SECRET=<password_place_holder>  -auto-approve  
 
         terraform state   
 
 3. Destroy resources from your local terminal:        
 
-        terraform destroy -auto-approve
+        terraform destroy -var ARM_CLIENT_ID=<appId_place_holder> -var ARM_CLIENT_SECRET=<password_place_holder> -auto-approve
 
 ### GitHub environment setup for DevOps:
 

@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  TAG: latest
-  VERSION: ${{ github.sha }}
+  TAG: ${{ secrets.VERSION }}
+  VERSION: ${{ github.event.pull_request.number }}
 
 permissions:
   contents: read
