@@ -29,7 +29,7 @@ class Tests(unittest.TestCase):
         ts = calendar.timegm(gmt)
         res = self.app.get('/')
         print(ts)
-        assert res.json == {"message": "Automate all the things!", "timestamp": ts}
+        assert res.json == {"message": "Automate all the things - change 2!", "timestamp": ts}
 
 
 if __name__ == "__main__":
