@@ -12,7 +12,7 @@ env:
     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}       
     REGISTRY: ghcr.io
     GIT_HUB_SECRETS: github-secrets
-    VERSION: ${{ secrets.VERSION }}
+    VERSION: ${{ vars.VERSION }}
     IMAGE_NAME: ${{ github.repository }}
     CLUSTER_RESOURCE_GROUP: "terraform-github-actions-rg"
     CLUSTER_NAME: "terraform-resource-aks"
