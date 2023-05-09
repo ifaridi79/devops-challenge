@@ -9,7 +9,18 @@ We will be using IaC Terraform tool to provision AKS in Azure subscription and u
 ### Local setup on Terminal for Developer:
 This will be a Python Flask Application shows the current time stamp on every request.
 
-We will be using brew to install the environment:
+Prequisite:
+Install git locally for git clone and code checkin. Install homebrew if you don't already have it, then: 
+
+1. Use this link: https://git-scm.com/download/mac
+
+        brew install git
+
+2. Clone the git repository:
+
+        git clone https://github.com/ifaridi79/devops-challenge.git
+
+Setup local environment:
 
 1. Setup Python 3 and Pip(Package manager) for Environment(MacOS):
 
@@ -33,7 +44,7 @@ Download Docker for Mac from https://docs.docker.com/desktop/install/mac-install
 
         touch Dockerfile
 
-Here is the Dockerfile code snippet:
+5. Here is the Dockerfile code snippet:
 
         # Use Python base image
         FROM python:3.6
@@ -49,11 +60,11 @@ Here is the Dockerfile code snippet:
         HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl --fail http://localhost:8080/ || exit 1" ]
         CMD [ "/flask/app.py" ]
 
-5. Build the Docker Image with tag locally:
+6. Build the Docker Image with tag locally:
 
         docker build -t app-flask .
 
-6. Run the Docker container from Image by mapping the host port to container port:
+7. Run the Docker container from Image by mapping the host port to container port:
 
         docker run -dp 80:8080 app-flask
 
@@ -89,7 +100,7 @@ In a terminal, run the following commands to login into Azure. Make sure you hav
         }
         ]
 
-3. Create a role base access control for Terraform. And configure that in Terraform infrastructure file terraform.tfvars:
+3. Create a role base access control for Terraform. And configure that in Terraform infrastructure file terraform.tfvars for local:
 
         az ad sp create-for-rbac --skip-assignment
 

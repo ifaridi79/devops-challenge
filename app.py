@@ -16,7 +16,7 @@ def message():
     # ts stores timestamp
     ts = calendar.timegm(gmt)
     print("timestamp:-", ts)
-    return jsonify({"message": "Automate all the things - change 5!", "timestamp": ts})
+    return jsonify({"message": "Automate all the things!", "timestamp": ts})
 
 
 @APP.errorhandler(404)
