@@ -18,6 +18,7 @@ jobs:
   build_code:
     name: 'Code Build'
     runs-on: ubuntu-latest
+    environment: Azure 
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -53,6 +54,7 @@ jobs:
     needs: [build_code]
     name: 'Build and Push Docker Image'    
     runs-on: ubuntu-latest
+    environment: Azure 
     permissions:
       contents: read
       packages: write
@@ -82,6 +84,7 @@ jobs:
     needs: [build-and-push-image]
     name: 'Test Docker Image' 
     runs-on: ubuntu-latest
+    environment: Azure 
 
     steps:
     # Login into Container Registry  
