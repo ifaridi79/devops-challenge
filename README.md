@@ -1,4 +1,4 @@
-# Liatrio devops-challenge
+# Azure DevOps
 
 ## Azure Subscription for AKS Provisioning
 
